@@ -1,0 +1,47 @@
+﻿#include "SinhMangDuLieu.h"
+void HoanVi(int& a, int& b) {
+	int temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
+void GenerateRandomData(int a[], int n)// Hàm phát sinh mảng dữ liệu ngẫu nhiên
+{
+	srand((unsigned int)time(NULL));
+
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = rand() % n;
+	}
+}
+//
+void GenerateSortedData(int a[], int n)// Hàm phát sinh mảng dữ liệu có thứ tự tăng dần
+{
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = i;
+	}
+}
+//
+void GenerateReverseData(int a[], int n)// Hàm phát sinh mảng dữ liệu có thứ tự ngược (giảm dần)
+{
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = n - 1 - i;
+	}
+}
+//
+void GenerateNearlySortedData(int a[], int n)// Hàm phát sinh mảng dữ liệu gần như có thứ tự
+{
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = i;
+	}
+	srand((unsigned int)time(NULL));
+	for (int i = 0; i < 10; i++)
+	{
+		int r1 = rand() % n;
+		int r2 = rand() % n;
+		HoanVi(a[r1], a[r2]);
+	}
+}
