@@ -2,13 +2,14 @@
 #define _NODE_H_
 #include <iostream>
 using namespace std;
-class Node
+class NODE
 {
 public:
-	int data;
-	Node* left;
-	Node* right;
-	Node();
-	~Node();
+	int key;
+	NODE* left;
+	NODE* right;
+	NODE();
+	virtual ~NODE();
 };
 #endif
+

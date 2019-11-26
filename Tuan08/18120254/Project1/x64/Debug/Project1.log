@@ -1,0 +1,5 @@
+﻿  BST.cpp
+  Source.cpp
+  Generating Code...
+d:\github\dsa_pt\tuan08\18120254\project1\bst.cpp(57): warning C4715: 'BST::SearchNode': not all control paths return a value
+  Project1.vcxproj -> D:\GITHUB\DSA_pt\Tuan08\18120254\x64\Debug\Project1.exe
