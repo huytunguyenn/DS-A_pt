@@ -59,7 +59,7 @@ NODE* BST::Search(int x) {
 	NODE* result = SearchNode(root, x);
 	return result;
 }
-void BST::SearchNodeAll(NODE* root, int x, bool &check) {
+void BST::SearchNodeAll(NODE* root, int x, bool &check) { // check để xuất ra thông báo 
 	if (!root)
 		return;
 	else if (root->key == x) {
@@ -74,37 +74,80 @@ void BST::SearchNodeAll(NODE* root, int x, bool &check) {
 void BST::SearchAll(int x, bool &check) {
 	SearchNodeAll(root, x, check);
 }
-
-void BST::Remove(int value) {
-	NODE* DelNode = SearchNode(root, value);
-	DelNode = Delete(DelNode);
-}
-NODE* BST::Delete(NODE* p) {
-	NODE* rp = new NODE;
-	NODE* f = new NODE;
-	if (p == NULL)
-		return NULL;
-	else if (p->left == NULL && p->right != NULL)
-		rp = p->right;
-	else if (p->right == NULL && p->left != NULL)
-		rp = p->left;
-	else if (p->left == NULL && p->right == NULL) {}
-	else {
-		f = p;
-		rp = p->right;
-		while (rp != NULL) {
-			f = rp;
-			rp = rp->left;
+void BST::FindRemove(int value) {
+	NODE* curr_node = new NODE; // nút hiện tại
+	NODE* parent = new NODE; // nút cha
+	if (root == NULL) {
+		cout << "Cay nhi phan rong!" << endl;
+		return;
+	}
+	int found = false; // check tìm thấy giá trị hay chưa
+	curr_node = root;
+	while (curr_node != NULL) { // duyệt cây để tìm giá trị
+		if (curr_node->key == value) {
+			found = true;
+			break;
 		}
-		if (f == p) {
-			rp->left = p->left;
+		parent = curr_node;
+		if (value > curr_node->key)
+			curr_node = curr_node->right; // duyệt sang phải
+		else
+			curr_node = curr_node->left; // duyệt sang trái
+	}
+	if (!found) { // nếu không tìm thấy giá trị
+		cout << "Khong tim thay gia tri!" << endl;
+		return;
+	}
+	if (curr_node->right == NULL && curr_node->left == NULL) { // trường hợp không có cây con => xóa nút, xóa liên kết vs nút cha
+		if (parent->right == curr_node) { // nếu nút cần xóa là nút con phải của nút cha
+			parent->right = NULL; // xóa nút 
+			delete curr_node;
+		}
+		else { // nếu nút cần xóa là nút con trái của nút cha
+			parent->left = NULL; // xóa nút
+			delete curr_node;
+		}
+		return;
+	}
+	if (curr_node->right != NULL && curr_node->left == NULL) { // trường hợp có 1 cây con (cây con phải) => liên kết cây con và nút cha
+		if (parent->left == curr_node) { // là nút con bên trái của nút cha
+			parent->left = curr_node->right; // nút thế mạng là nút con phải (cây con phải)
+			delete curr_node;
+		}
+		else {						   //  (parent->right == curr_node)
+			parent->right = curr_node->right; // nút thế mạng là nút con
+			delete curr_node;
+		}
+		return;
+	}
+	if (curr_node->right == NULL && curr_node->left != NULL) { // trường hợp có 1 cây con (cây con trái)
+		if (parent->left == curr_node) {
+			parent->left = curr_node->left; 
+			delete curr_node;
 		}
 		else {
-			f->left = rp->right;
-			rp->right = p->right;
-			rp->left = p->left;
+			parent->right = curr_node->left;
+			delete curr_node;
 		}
+		return;
 	}
-	//delete p;
-	return rp;
+	// trường hợp có 2 cây con
+	NODE* check_node = curr_node->right; // xét cây con bên phải
+	if (check_node->left == NULL) { // TH không nút trái 
+		curr_node->key = check_node->key;
+		curr_node->right = check_node->right;
+		delete check_node;
+	}
+	else { // TH có nút trái, tìm nút trái nhất
+		NODE* successor, *parent; // tìm node thế mạng 
+		parent = check_node;
+		successor = check_node->left;
+		while (successor->left != NULL) { // node thế mạng là nút trái nhất cây con phải
+			parent = successor;
+			successor = successor->left;
+		}
+		curr_node->key = successor->key;
+		parent->left = successor->right; // succcesor là trái nhất rồi, làm gì có successor->left được ^^
+		delete successor;
+	}
 }

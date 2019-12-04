@@ -117,12 +117,10 @@
   <ItemGroup>
     <ClInclude Include="BST.h" />
     <ClInclude Include="Header.h" />
-    <ClInclude Include="NODE.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BST.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NODE.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

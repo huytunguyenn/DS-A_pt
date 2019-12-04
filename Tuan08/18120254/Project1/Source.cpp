@@ -20,15 +20,13 @@ void Menu(BST &tree) {
 		} while (!(choice >= 0 && choice < 6));
 		switch (choice) {
 		case 0: {
-			break; 
+			break;
 		}
 		case 1: {
 			int x;
-			do {
-				cout << "Nhap phan tu them vao (-1 de ket thuc): ";
-				cin >> x;
-				tree.Insert(x);
-			} while (x != -1);
+			cout << "Nhap gia tri phan tu them vao: ";
+			cin >> x;
+			tree.Insert(x);
 			break;
 		}
 		case 2: {
@@ -39,7 +37,7 @@ void Menu(BST &tree) {
 			int x;
 			cout << "Nhap gia tri muon xoa: ";
 			cin >> x;
-			tree.Remove(x);
+			tree.FindRemove(x);
 			break;
 		}
 		case 4: {
@@ -51,7 +49,7 @@ void Menu(BST &tree) {
 				cout << "Khong tim thay phan tu " << x << " trong cay" << endl;
 			else {
 				NODE* temp = tree.Search(x);
-				cout << "Dia chi: " << temp<<endl;
+				cout << "Dia chi: " << temp << endl;
 			}
 			break;
 		}
@@ -61,7 +59,7 @@ void Menu(BST &tree) {
 			cout << "Nhap gia tri muon tim: ";
 			cin >> x;
 			cout << "Gia tri: " << x << endl;
-			tree.SearchAll(x,check);
+			tree.SearchAll(x, check);
 			if (check == false)
 				cout << "Khong tim thay phan tu " << x << " trong cay" << endl;
 			break;
