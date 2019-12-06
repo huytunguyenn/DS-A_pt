@@ -1,14 +1,12 @@
 ﻿#include "AVLTREE.h"
 
-
-
 AVLTREE::AVLTREE(){
 	root = NULL;
 }
-void AVLTREE::RemoveAll(AVLNODE*& t){
+void AVLTREE::RemoveAll(AVLNODE* t){
 	if (t != NULL) {
-		RemoveAll(t->pLeft);
-		RemoveAll(t->pRight);
+		RemoveAll(t->left);
+		RemoveAll(t->right);
 		delete t;
 	}
 }
@@ -16,145 +14,102 @@ AVLTREE::~AVLTREE(){
 	RemoveAll(root);
 }
 AVLNODE* AVLTREE::CreateNode(int Data){
-	AVLNODE* pNode;
-	pNode = new AVLNODE; //Xin cấp phát bộ nhớ động để tạo một phần tử (node)mới
+	AVLNODE* pNode= new AVLNODE; 
 	if (pNode == NULL) {
 		return NULL;
 	}
-	pNode->Key = Data;
-	pNode->pLeft = NULL;
-	pNode->pRight = NULL;
-	pNode->bal = 0; //Ghi chú: giải thích ý nghĩa của thao tác này
+	pNode->key = Data;
+	pNode->left = NULL;
+	pNode->right = NULL;
+	pNode->height = 1; 
 	return pNode;
 }
-void AVLTREE::LeftRotate(AVLNODE*& P){
-	AVLNODE* Q;
-	Q = P->pRight;
-	P->pRight = Q->pLeft;
-	Q->pLeft = P;
-	P = Q;
+int max(int a, int b){
+	return (a > b) ? a : b;
 }
-void AVLTREE::RightRotate(AVLNODE*& P){
-	AVLNODE* Q;
-	Q = P->pLeft;
-	P->pLeft = Q->pRight;
-	Q->pRight = P;
-	P = Q;
+AVLNODE* AVLTREE::LeftRotate(AVLNODE* root){
+	// xoay
+	AVLNODE* p;
+	p = root->right;
+	root->right = p->left;
+	p->left = root;
+	// cập nhật chiều cao
+	root->height = max(root->left->height,root->right->height) + 1;
+	p->height = max(p->left->height,p->right->height) + 1;
+	return p; // return p rồi cho root = leftrotate();
 }
-void AVLTREE::LeftBalance(AVLNODE*& P){
-	switch (P->pLeft->bal) {
-	case 1: //mất cân bằng trái trái
-		RightRotate(P);
-		P->bal = 0;
-		P->pRight->bal = 0;
-		break;
-	case 2: //trường hợp mất cân bằng 
-		LeftRotate(P->pLeft);
-		RightRotate(P);
-		switch (P->bal) {
-		case 0:
-			P->pLeft->bal = 0;
-			P->pRight->bal = 0;
-			break;
-		case 1:
-			P->pLeft->bal = 0;
-			P->pRight->bal = 2;
-			break;
-		case 2:
-			P->pLeft->bal = 1;
-			P->pRight->bal = 0;
-			break;
-		}
-		P->bal = 0;
-		break;
+AVLNODE* AVLTREE::RightRotate(AVLNODE* root){
+	AVLNODE* p;
+	p = root->left;
+	p->left = root->right;
+	p->right = root;
+	// cập nhật chiều cao
+	root->height = max(root->left->height, root->right->height) + 1;
+	p->height = max(p->left->height, p->right->height) + 1;
+	return p; // return p rồi cho root = leftrotate();
+}
+int getBalance(AVLNODE* N){
+	if (N == NULL)
+		return 0;
+	else if (N->left == NULL&& N->right != NULL)
+		return -N->right->height;
+	else if (N->right == NULL&& N->left != NULL)
+		return N->left->height;
+	else
+	return N->left->height - N->right->height;
+} 
+void AVLTREE::InsertNode(int key) {
+	root = Insert(root, key);
+}
+AVLNODE* AVLTREE::Insert(AVLNODE* node, int key){
+	if (node == NULL)
+		return(CreateNode(key));
+	// thêm 1 phần tử vào cây bst
+	if (key < node->key)
+		node->left = Insert(node->left, key);
+	else
+		node->right = Insert(node->right, key);
+	
+	if (node->left==NULL && node->right!=NULL) {
+		node->height = 1 + node->right->height;
 	}
-}
-void AVLTREE::RightBalance(AVLNODE*& P){
-	switch (P->pRight->bal) {
-	case 1: // trường hợp mất cân bằng
-		RightRotate(P->pRight);
-		LeftRotate(P);
-		switch (P->bal) {
-		case 0:
-			P->pLeft->bal = 0;
-			P->pRight->bal = 0;
-			break;
-		case 1:
-			P->pLeft->bal = 1;
-			P->pRight->bal = 0;
-			break;
-		case 2:
-			P->pLeft->bal = 0;
-			P->pRight->bal = 2;
-			break;
-		}
-		P->bal = 0;
-		break;
-	case 2: // trường hợp mất cân bằng 
-		LeftRotate(P);
-		P->bal = 0;
-		P->pLeft->bal = 0;
-		break;
+	else if (node->left != NULL && node->right== NULL) {
+		node->height = 1 + node->left->height;
 	}
-}
-int AVLTREE::InsertNode(int x){
-	int res;
-	if (root == NULL) { 
-		root = CreateNode(x);
-		if (root == NULL) {
-			return -1; //thêm ko thành công vì thiếu bộ nhớ
-		}
-		return 2;//thêm thành công và làm tăng chiều cao cây
+	else
+		node->height = 1 + max(node->left->height, node->right->height);
+
+	int balance = getBalance(node);
+
+	// Cây mất cân bằng
+	// Left Left   
+	if (balance > 1 && key < node->left->key)
+		return RightRotate(node);
+
+	// Right Right 
+	if (balance < -1 && key > node->right->key)
+		return LeftRotate(node);
+
+	// Left Right 
+	if (balance > 1 && key > node->left->key){
+		node->left = LeftRotate(node->left);
+		return RightRotate(node);
 	}
-	else {
-		if (root->Key == x) {
-			return 0; //khóa này đã tồn tại trong cây
-		}
-		else if (root->Key > x) {
-			root = root->pLeft;
-			res = InsertNode(x);
-			if (res < 2) {
-				return res;
-			}
-			switch (root->bal) { 
-			case 0:
-				root->bal = 1;
-				return 2;
-			case 1:
-				LeftBalance(root);
-				return 1;
-			case 2:
-				root->bal = 0;
-				return 1;
-			}
-		}
-		else {
-			root = root->pRight;
-			res = InsertNode(x);
-			if (res < 2) {
-				return res;
-			}
-			switch (root->bal) {
-			case 0:
-				root->bal = 2;
-				return 2;
-			case 1:
-				root->bal = 0;
-				return 1;
-			case 2:
-				RightBalance(root);
-				return 1;
-			}
-		}
+
+	// Right Left 
+	if (balance < -1 && key < node->right->key){
+		node->right = RightRotate(node->right);
+		return LeftRotate(node);
 	}
+
+	/* return the (unchanged) node pointer */
+	return node;
 }
-void AVLTREE::Traverse(AVLNODE* t)
-{
-	if (t != NULL)
-	{
-		Traverse(t->pLeft);
-		cout << t->Key << " ";
-		Traverse(t->pRight);
+void AVLTREE::Traverse(AVLNODE* t){
+	if (t != NULL){
+		Traverse(t->left);
+		cout << t->key << " ";
+		Traverse(t->right);
 	}
 }
 void AVLTREE::LNR() {

@@ -18,17 +18,11 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AVLNODE.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AVLTREE.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AVLNODE.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AVLTREE.h">
       <Filter>Header Files</Filter>
     </ClInclude>

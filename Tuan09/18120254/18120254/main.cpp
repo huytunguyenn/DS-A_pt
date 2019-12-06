@@ -11,5 +11,6 @@ int main(){
 	} while (Data != -1);
 	cout<<endl<<"Cay AVL vua tao:"<<endl;
 	tree.LNR();
+	system("pause");
 	return 0;
-}
+}
